@@ -20,59 +20,8 @@ Production-ready
 🏗 Architecture
 🔄 System Flow
 
-Client
-→ API Gateway (HTTP API)
-→ Lambda (Create Order)
-→ SQS (Orders Queue)
-→ Lambda (Process Order)
-→ SNS (Notifications)
-→ Email / Subscribers
 
-If processing fails → Dead Letter Queue (DLQ)
-
-📊 Simple Architecture Diagram
-        Client
-           │
-     POST /orders
-           │
-     API Gateway (HTTP API)
-           │
-   Lambda – Create Order
-           │
-       SQS Queue
-           │
-   Lambda – Process Order
-           │
-         SNS Topic
-           │
-     Email / Subscribers
-           │
-          DLQ (if failure)
-🧱 Services Used & Trade-Offs
-1️⃣ API Gateway – HTTP API
-Why used
-
-Cheapest API Gateway option
-
-Low latency
-
-Simple integration with Lambda
-
-Pay-per-request pricing
-
-Trade-off
-
-Fewer advanced features than REST API
-
-No built-in console “Test” button
-
-When to use REST API instead
-
-API keys & usage plans required
-
-Advanced request validation
-
-Full API lifecycle management
+   
 
 2️⃣ Lambda – Create Order
 Why used
@@ -240,22 +189,53 @@ Failures move to DLQ for review.
 
 This prevents overload during high-traffic events (e.g., Black Friday) while keeping infrastructure costs low.
 
-🔮 Possible Enhancements
+Architecture
+🔄 System Flow (Step-by-Step)
 
-Add DynamoDB for persistent storage
+1️⃣ Customer submits an order
+A client sends a POST /orders request to the API.
 
-Add Cognito for authentication
+2️⃣ API Gateway receives the request (HTTP API)
 
-Add WAF for protection
+Chosen because it is the cheapest API Gateway option
 
-Add CloudWatch alarms
+Lightweight and cost-efficient
 
-Add idempotency protection
+Forwards the request to Lambda
 
-Implement Infrastructure as Code (Terraform)
+3️⃣ Lambda (Create Order) executes
 
-Add CI/CD pipeline
+Validates the input
 
+Generates an orderId
+
+Sends the order to SQS
+
+Immediately returns “Order accepted” to the customer
+
+4️⃣ SQS stores the message
+
+Buffers traffic spikes
+
+Decouples frontend from backend
+
+Ensures no order is lost
+
+5️⃣ Lambda (Process Order) is triggered automatically
+
+Processes the order asynchronously
+
+Executes business logic (e.g., payment, inventory, notification)
+
+6️⃣ SNS publishes an event
+
+Sends notification to subscribers
+
+Can notify email, other services, or future microservices
+
+7️⃣ If processing fails
+
+Message is retried automatically
 📎 Summary
 
 This project demonstrates a cost-aware, event-driven, serverless architecture using:
