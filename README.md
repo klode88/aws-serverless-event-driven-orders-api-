@@ -1,4 +1,4 @@
-Project 4 – Event-Driven Orders API (Cost-Aware Serverless Architecture)
+PROJECT 4 – Event-Driven Orders API (Cost-Aware Serverless Architecture)
  Overview
 
 This project implements a serverless, event-driven order processing system on AWS.
@@ -176,7 +176,7 @@ SNS notifies other systems.
 
 Failures move to DLQ for review.
 
-This prevents overload during high-traffic events (e.g., Black Friday) while keeping infrastructure costs low.
+This prevents overload during high-traffic events ( Black Friday) while keeping infrastructure costs low.
 
 Architecture
 🔄 System Flow (Step-by-Step)
@@ -192,9 +192,7 @@ Lightweight and cost-efficient
 
 Forwards the request to Lambda
 
-3️⃣ Lambda (Create Order) executes
-
-Validates the input
+3️⃣ Lambda (Create Order) executes,Validates the input
 
 Generates an orderId
 
@@ -202,9 +200,7 @@ Sends the order to SQS
 
 Immediately returns “Order accepted” to the customer
 
-4️⃣ SQS stores the message
-
-Buffers traffic spikes
+4️⃣ SQS stores the message,Buffers traffic spikes
 
 Decouples frontend from backend
 
@@ -216,15 +212,11 @@ Processes the order asynchronously
 
 Executes business logic (e.g., payment, inventory, notification)
 
-6️⃣ SNS publishes an event
-
-Sends notification to subscribers
+6️⃣ SNS publishes an event,Sends notification to subscribers
 
 Can notify email, other services, or future microservices
 
-7️⃣ If processing fails
-
-Message is retried automatically 
+7️⃣ If processing fails,Message is retried automatically 
 
 📎 Summary
 
