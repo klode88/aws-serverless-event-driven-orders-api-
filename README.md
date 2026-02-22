@@ -7,21 +7,10 @@ It accepts customer orders through an API, queues them for asynchronous processi
 
 The architecture is intentionally designed to be:
 
-Scalable
-
-Fault-tolerant
-
-Cost-efficient
-
-Loosely coupled
-
-Production-ready
+Scalable-Fault-tolerant-Cost-efficient-Loosely coupled-Production-ready
 
 🏗 Architecture
 🔄 System Flow
-
-
-   
 
 2️⃣ Lambda – Create Order
 Why used
@@ -34,7 +23,7 @@ Fast synchronous response
 
 Short execution time = low cost
 
-Trade-off
+-Trade-off
 
 Execution time limits
 
@@ -55,7 +44,7 @@ Decouples API from processing
 
 Built-in retry mechanism
 
-Trade-off
+-Trade-off
 
 At-least-once delivery
 
@@ -76,7 +65,7 @@ Scales automatically with queue depth
 
 Clean separation of responsibilities
 
-Trade-off
+-Trade-off
 
 Requires monitoring & DLQ handling
 
@@ -110,7 +99,7 @@ Captures failed messages
 
 Enables operational debugging
 
-Trade-off
+-Trade-off
 
 Requires monitoring and manual review
 
@@ -235,7 +224,8 @@ Can notify email, other services, or future microservices
 
 7️⃣ If processing fails
 
-Message is retried automatically
+Message is retried automatically 
+
 📎 Summary
 
 This project demonstrates a cost-aware, event-driven, serverless architecture using:
