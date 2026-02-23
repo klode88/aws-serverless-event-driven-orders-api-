@@ -1,23 +1,81 @@
-Debugging & Troubleshooting
+# 🔎 Debugging & Error Resolution (Step-by-Step)
 
-During development, several configuration and permission issues were encountered while wiring the services together. Below are the key errors and how they were resolved.
+This section documents real issues encountered during implementation and how they were resolved.
 
-1️⃣ API Route Error – “Not Found”
+---
 
-When testing the API Gateway invoke URL, the response returned { "message": "Not Found" }. This occurred because the base stage URL was accessed without specifying the correct route path. The API was configured with a POST /orders route, but the request was made to /prod instead of /prod/orders. Additionally, using a browser sent a GET request while the route expected POST. The issue was resolved by calling the full endpoint path /prod/orders with the correct HTTP method, which successfully routed the request to the Create Order Lambda.
+## 1️⃣ API Gateway – "Not Found" Error
 
-2️⃣ SQS Trigger Permission Error
+When testing the API endpoint using the stage URL, the response returned:
 
-While attaching the SQS queue as a trigger to the Process Order Lambda, AWS returned an error indicating that the execution role did not have permission to call ReceiveMessage on SQS. The root cause was that the Lambda execution role lacked the required SQS permissions. This was resolved by attaching the managed policy AWSLambdaSQSQueueExecutionRole to the Process Order Lambda role, granting the necessary permissions for polling and deleting messages from the queue. After this update, the trigger was successfully configured.
+{
+  "message": "Not Found"
+}
 
-3️⃣ Lambda Handler Error – “event is not defined”
+This occurred because the request was sent to the base stage URL (`/prod`) without including the defined resource path (`/orders`). API Gateway requires the correct route path to match the configured integration.
 
-During testing of the Process Order Lambda, execution failed with a ReferenceError: event is not defined. The issue was caused by referencing the event object without defining it in the handler function signature. The handler was corrected to properly accept the event parameter using export const handler = async (event) => { ... }, ensuring the function could process the incoming SQS event. Once corrected, the Lambda executed successfully.
+**Resolution:**  
+Updated the request URL to include `/orders`, ensuring it matched the POST route configured in API Gateway.
 
-4️⃣ CloudWatch Log Group Does Not Exist
+---
 
-While checking CloudWatch logs for the Process Order Lambda, the log group was not found. This happened because the Lambda had not yet executed successfully, and CloudWatch automatically creates the log group only after the first invocation. After resolving the permission and handler errors and triggering the function via SQS, the log group was automatically created and logs became available.
+## 2️⃣ SQS Trigger Permission Error
 
-5️⃣ IAM SendMessage Permission Misconfiguration
+While configuring the SQS trigger for the `process-order` Lambda, AWS returned:
 
-The Create Order Lambda initially failed to send messages to SQS due to insufficient IAM permissions. The execution role did not allow the sqs:SendMessage action on the main orders queue ARN. In one instance, the policy mistakenly referenced the Dead Letter Queue instead of the primary queue. The issue was resolved by updating the IAM policy to allow sqs:SendMessage on the correct SQS queue ARN. After applying the corrected policy, messages were successfully delivered to the queue.
+"InvalidParameterValueException: The function execution role does not have permissions to call ReceiveMessage on SQS"
+
+This occurred because the Lambda execution role lacked required SQS permissions.
+
+**Resolution:**  
+Attached a policy to the process-order Lambda role granting:
+
+- sqs:ReceiveMessage
+- sqs:DeleteMessage
+- sqs:GetQueueAttributes
+
+After attaching the correct policy, the trigger was successfully configured.
+
+---
+
+## 3️⃣ Create Lambda Missing SQS Send Permission
+
+The create-order Lambda initially did not have permission to send messages to the SQS queue.
+
+**Resolution:**  
+Attached an IAM policy allowing:
+
+- sqs:SendMessage
+
+This enabled the create-order Lambda to push orders to the queue successfully.
+
+---
+
+## 4️⃣ Lambda Runtime Error – "event is not defined"
+
+While testing the process-order Lambda manually, execution failed with:
+
+ReferenceError: event is not defined
+
+This occurred because the handler function did not properly define or receive the `event` parameter.
+
+**Resolution:**  
+Updated the Lambda handler to correctly accept and reference the event object.
+
+After fixing the handler signature, the function executed successfully.
+
+---
+
+## 5️⃣ CloudWatch Log Group Does Not Exist
+
+When attempting to view logs for the process-order Lambda, CloudWatch returned:
+
+"Log group does not exist"
+
+This happened because the Lambda had never executed successfully, and CloudWatch log groups are only created upon first execution.
+
+**Resolution:**  
+Triggered the Lambda successfully via SQS, which automatically created the log group.
+
+Logs were then available for inspection.
+
