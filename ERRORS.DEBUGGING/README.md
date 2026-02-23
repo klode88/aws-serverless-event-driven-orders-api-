@@ -1,81 +1,13 @@
-# 🔎 Debugging & Error Resolution (Step-by-Step)
+🛠 Errors & Debugging – Event Driven Orders API
 
-This section documents real issues encountered during implementation and how they were resolved.
+ 1 --We first encountered an API Not Found error when testing the deployed API Gateway endpoint because we called only the stage URL instead of the full route path. The API was correctly deployed, but the request did not include the configured resource path. After calling the correct POST /orders route under the stage, the Create Lambda triggered successfully and the issue was resolved.
 
----
+2--When configuring SQS to trigger the Process Lambda, we received a permissions error stating that the function execution role did not have permission to call ReceiveMessage on SQS. This happened because the Process Lambda IAM role did not include SQS consumer permissions. We fixed this by attaching a policy allowing ReceiveMessage, DeleteMessage and GetQueueAttributes to the specific queue, after which the trigger was created successfully.
 
-## 1️⃣ API Gateway – "Not Found" Error
+3--After attaching the correct IAM policy to the Process Lambda role, the SQS trigger worked and the Lambda was able to receive and process messages. This confirmed that the event source mapping between SQS and the Process Lambda was correctly configured and that permissions were no longer blocking execution.
 
-When testing the API endpoint using the stage URL, the response returned:
+4--The Create Lambda initially failed to send messages to SQS because its execution role did not include the SendMessage permission. We resolved this by adding an IAM policy allowing sqs SendMessage to the specific queue ARN. Once attached, the Create Lambda successfully pushed orders to SQS and returned Order Accepted to the client.
 
-{
-  "message": "Not Found"
-}
+5--During manual testing of the Process Lambda, execution failed with a runtime error saying event is not defined. This was caused by an incorrect handler definition that did not include the event parameter. We corrected the handler function signature to properly accept the event object, and the Lambda executed successfully afterward.
 
-This occurred because the request was sent to the base stage URL (`/prod`) without including the defined resource path (`/orders`). API Gateway requires the correct route path to match the configured integration.
-
-**Resolution:**  
-Updated the request URL to include `/orders`, ensuring it matched the POST route configured in API Gateway.
-
----
-
-## 2️⃣ SQS Trigger Permission Error
-
-While configuring the SQS trigger for the `process-order` Lambda, AWS returned:
-
-"InvalidParameterValueException: The function execution role does not have permissions to call ReceiveMessage on SQS"
-
-This occurred because the Lambda execution role lacked required SQS permissions.
-
-**Resolution:**  
-Attached a policy to the process-order Lambda role granting:
-
-- sqs:ReceiveMessage
-- sqs:DeleteMessage
-- sqs:GetQueueAttributes
-
-After attaching the correct policy, the trigger was successfully configured.
-
----
-
-## 3️⃣ Create Lambda Missing SQS Send Permission
-
-The create-order Lambda initially did not have permission to send messages to the SQS queue.
-
-**Resolution:**  
-Attached an IAM policy allowing:
-
-- sqs:SendMessage
-
-This enabled the create-order Lambda to push orders to the queue successfully.
-
----
-
-## 4️⃣ Lambda Runtime Error – "event is not defined"
-
-While testing the process-order Lambda manually, execution failed with:
-
-ReferenceError: event is not defined
-
-This occurred because the handler function did not properly define or receive the `event` parameter.
-
-**Resolution:**  
-Updated the Lambda handler to correctly accept and reference the event object.
-
-After fixing the handler signature, the function executed successfully.
-
----
-
-## 5️⃣ CloudWatch Log Group Does Not Exist
-
-When attempting to view logs for the process-order Lambda, CloudWatch returned:
-
-"Log group does not exist"
-
-This happened because the Lambda had never executed successfully, and CloudWatch log groups are only created upon first execution.
-
-**Resolution:**  
-Triggered the Lambda successfully via SQS, which automatically created the log group.
-
-Logs were then available for inspection.
-
+6--When attempting to view logs in CloudWatch, we saw a log group does not exist error. This occurred because the Lambda had not yet executed successfully, and CloudWatch only creates the log group after the first invocation. After triggering a successful execution, the log group was automatically created and logs became available.
