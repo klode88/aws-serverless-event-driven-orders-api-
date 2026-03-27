@@ -66,18 +66,25 @@ This improves reliability by making failed events visible for investigation inst
 ⚙️ Why These Services Were Chosen
 
 Amazon API Gateway (HTTP API)
+
 Why used:
+
 Lowest-cost API Gateway option
 Good fit for simple API endpoints such as POST /orders
 Fully managed, so no servers to maintain
 Automatically scales with incoming traffic
+
 Alternatives:
+
 REST API Gateway
 A stronger choice when advanced API features are needed, such as API keys, usage plans, request validation, or more detailed controls.
 Application Load Balancer (ALB)
 Better suited for container or server-based architectures (ECS/EC2) rather than lightweight serverless APIs.
+
 AWS Lambda
+
 Why used:
+
 Fully serverless with no infrastructure to manage
 Automatically scales based on demand
 Pay only when code runs
@@ -86,7 +93,9 @@ Keeps the architecture simple and lightweight
 Used in this project for:
 creating the order
 processing the queued order asynchronously
+
 Alternatives:
+
 AWS Step Functions
 Suitable for multi-step workflows involving branching logic, retries, or state tracking. Not required here because the flow is simple and handled efficiently with Lambda and SQS.
 Amazon ECS (Fargate)
@@ -94,41 +103,58 @@ Better for long-running or containerised workloads where more runtime control is
 Amazon EC2
 Provides full control but requires server management and introduces continuous running costs.
 Amazon SQS (Standard Queue)
+
 Why used:
+
 Extremely low-cost messaging service
 Decouples the API layer from backend processing
 Buffers sudden traffic spikes
 Helps prevent message loss
 Supports reliable asynchronous design
+
 Alternatives:
+
 SQS FIFO Queue
 Used when strict message ordering and deduplication are required.
 Amazon EventBridge
 Better for advanced event routing and integration across multiple services.
+
 Amazon SNS
+
 Why used:
+
 Enables fan-out architecture
 Allows one event to notify multiple subscribers
 Keeps services loosely coupled
 Easy to extend with additional integrations
+
 Alternatives:
+
 Amazon EventBridge
+
 Better suited for complex event-driven systems requiring filtering and routing rules.
 Direct Lambda invocation
 Simpler but introduces tighter coupling between services.
+
 Dead Letter Queue (DLQ)
 Why used:
+
 Captures messages that fail processing
 Prevents data loss
 Supports debugging and monitoring
 Improves system reliability
+
 Alternatives:
+
 Retry-only approach
 Simpler setup but lacks visibility into failed messages.
 Step Functions error handling
 Provides structured retry logic, but adds complexity not needed for this design.
+
 AWS IAM
+
 Why used:
+
 Enforces least-privilege access
 Ensures services only perform required actions
 Improves security posture
@@ -137,7 +163,9 @@ Typical permissions include:
 sqs:SendMessage
 sns:Publish
 CloudWatch logging permissions
+
 Alternatives:
+
 Broad permissions
 Easier to configure but insecure and not suitable for production.
 Shared roles
