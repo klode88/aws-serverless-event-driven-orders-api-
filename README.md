@@ -6,7 +6,9 @@ Scalable
 Fault-tolerant
 Loosely coupled
 Production-aware
+
 📌 Overview
+
 This project demonstrates how a modern backend can process orders without relying on always-running servers.
 Instead of keeping infrastructure running 24/7, the system uses on-demand AWS services so it can:
 respond quickly to incoming requests
@@ -14,7 +16,9 @@ scale automatically when traffic increases
 remain efficient when traffic is low
 isolate failures without breaking the whole system
 This makes it a strong example of real-world cloud design focused on simplicity, resilience, and scalability.
+
 🏗 Architecture
+
 Services Used
 Amazon API Gateway (HTTP API)
 AWS Lambda
@@ -23,7 +27,9 @@ Amazon SNS
 Amazon SQS Dead Letter Queue (DLQ)
 AWS IAM
 Amazon CloudWatch
+
 🔄 System Flow
+
 1. Customer submits an order
 A client sends a POST /orders request to the API.
 2. API Gateway receives the request
@@ -56,7 +62,9 @@ future microservices
 7. Failed messages move to the DLQ
 If processing repeatedly fails, the message is moved to a Dead Letter Queue.
 This improves reliability by making failed events visible for investigation instead of silently losing them.
+
 ⚙️ Why These Services Were Chosen
+
 Amazon API Gateway (HTTP API)
 Why used:
 Lowest-cost API Gateway option
@@ -134,7 +142,9 @@ Broad permissions
 Easier to configure but insecure and not suitable for production.
 Shared roles
 Faster to set up but weaker from a security and auditing perspective.
+
 🧠 Architectural Benefits
+
 This project demonstrates key cloud architecture principles:
 Asynchronous processing
 Loose coupling between services
@@ -142,7 +152,9 @@ Automatic scaling
 Failure isolation
 Observability through logs and DLQ
 Efficient use of managed services
+
 🏢 Real Business Use Case
+
 Example: E-commerce platform
 Customer places an order
 API instantly accepts the request
@@ -154,8 +166,10 @@ This design is effective during high-traffic events such as:
 Black Friday
 flash sales
 seasonal demand spikes
-It prevents system overload while maintaining a responsive user experience.
+It prevents system overload while maintaining a responsive user experience
+
 📎 Project Summary
+
 This project demonstrates a serverless, event-driven architecture using:
 API Gateway
 Lambda
