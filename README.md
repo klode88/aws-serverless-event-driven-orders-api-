@@ -107,6 +107,7 @@ Better for long-running or containerised workloads where more runtime control is
 Amazon EC2
 
 Provides full control but requires server management and introduces continuous running costs.
+
 Amazon SQS (Standard Queue)
 
 Why used:
