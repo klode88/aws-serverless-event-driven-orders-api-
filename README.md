@@ -103,7 +103,9 @@ Suitable for multi-step workflows involving branching logic, retries, or state t
 Amazon ECS (Fargate)
 
 Better for long-running or containerised workloads where more runtime control is needed.
+
 Amazon EC2
+
 Provides full control but requires server management and introduces continuous running costs.
 Amazon SQS (Standard Queue)
 
@@ -143,6 +145,7 @@ Direct Lambda invocation
 Simpler but introduces tighter coupling between services.
 
 Dead Letter Queue (DLQ)
+
 Why used:
 
 Captures messages that fail processing
