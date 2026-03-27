@@ -78,6 +78,7 @@ Alternatives:
 
 REST API Gateway
 A stronger choice when advanced API features are needed, such as API keys, usage plans, request validation, or more detailed controls.
+
 Application Load Balancer (ALB)
 Better suited for container or server-based architectures (ECS/EC2) rather than lightweight serverless APIs.
 
@@ -98,7 +99,9 @@ Alternatives:
 
 AWS Step Functions
 Suitable for multi-step workflows involving branching logic, retries, or state tracking. Not required here because the flow is simple and handled efficiently with Lambda and SQS.
+
 Amazon ECS (Fargate)
+
 Better for long-running or containerised workloads where more runtime control is needed.
 Amazon EC2
 Provides full control but requires server management and introduces continuous running costs.
@@ -115,8 +118,11 @@ Supports reliable asynchronous design
 Alternatives:
 
 SQS FIFO Queue
+
 Used when strict message ordering and deduplication are required.
+
 Amazon EventBridge
+
 Better for advanced event routing and integration across multiple services.
 
 Amazon SNS
@@ -148,7 +154,9 @@ Alternatives:
 
 Retry-only approach
 Simpler setup but lacks visibility into failed messages.
-Step Functions error handling
+
+Step Functions
+error handling
 Provides structured retry logic, but adds complexity not needed for this design.
 
 AWS IAM
@@ -168,7 +176,9 @@ Alternatives:
 
 Broad permissions
 Easier to configure but insecure and not suitable for production.
+
 Shared roles
+
 Faster to set up but weaker from a security and auditing perspective.
 
 🧠 Architectural Benefits
